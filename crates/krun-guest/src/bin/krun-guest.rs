@@ -12,6 +12,7 @@ use krun_guest::sommelier::exec_sommelier;
 use krun_guest::user::setup_user;
 use log::debug;
 use rustix::process::{getrlimit, setrlimit, Resource};
+use utils::env::find_in_path;
 
 fn main() -> Result<()> {
     env_logger::init();
@@ -47,6 +48,11 @@ fn main() -> Result<()> {
     };
 
     setup_pulse_proxy(run_path)?;
+
+    Command::new("/usr/lib/systemd/systemd-udevd").spawn()?;
+    if let Some(hidpipe_client_path) = find_in_path("hidpipe-client")? {
+        Command::new(hidpipe_client_path).spawn()?;
+    }
 
     // Will not return if successful.
     exec_sommelier(&options.command, &options.command_args)
