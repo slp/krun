@@ -92,7 +92,7 @@ fn main() -> Result<()> {
         } else {
             let sysinfo = sysinfo().context("Failed to get system information")?;
             let ram_total = sysinfo.ram_total() / 1024 / 1024;
-            cmp::min(MiB::from((ram_total as f64 * 0.8) as u32), MiB::from(16384))
+            cmp::min(MiB::from((ram_total as f64 * 0.8) as u32), MiB::from(32768))
         };
         // Bind the microVM to the specified CPU cores.
         let mut cpuset = CpuSet::new();
@@ -103,7 +103,7 @@ fn main() -> Result<()> {
         }
         debug!(cpuset:?; "sched_setaffinity");
         sched_setaffinity(None, &cpuset).context("Failed to set CPU affinity")?;
-        // Configure the number of vCPUs and the amount of RAM (max 16384 MiB).
+        // Configure the number of vCPUs and the amount of RAM.
         //
         // SAFETY: Safe as no pointers involved.
         debug!(num_vcpus, ram_mib = u32::from(ram_mib); "krun_set_vm_config");
