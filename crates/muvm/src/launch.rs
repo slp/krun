@@ -154,7 +154,7 @@ fn lock_file() -> Result<(Option<File>, Uuid)> {
     Ok((Some(lock_file), cookie))
 }
 
-fn request_launch(
+pub fn request_launch(
     server_port: u32,
     cookie: Uuid,
     command: PathBuf,
